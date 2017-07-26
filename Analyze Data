@@ -1,0 +1,50 @@
+import json
+import pandas as pd
+import re
+tweets_data_path = 'twitter_rawdata.json'
+tweets_data = []
+tweets_file = open(tweets_data_path, "r")
+for line in tweets_file:
+    try:
+        tweet = json.loads(line)
+        tweets_data.append(tweet)
+    except:
+        continue;
+print 'Total Tweets', len(tweets_data)
+
+tweets = pd.DataFrame()
+tweets['text'] = [tweet.get('text','') for tweet in tweets_data]
+tweets['lang'] = [tweet.get('lang','') for tweet in tweets_data]
+tweets_by_lang = tweets['lang'].value_counts()
+print 'Number of Languages ', len(tweets_by_lang)
+tweets['place'] = [tweet.get('place','') for tweet in tweets_data]
+tweets_by_cont = tweets['place'].value_counts()
+print 'Number of Places ', len(tweets_by_cont)
+
+def word_in_text(word, text):
+    word = word.lower()
+    text = text.lower()
+    match = re.search(word, text)
+    if match:
+        return True
+    return False
+tweets['globalwarming'] = tweets['text'].apply(lambda tweet: word_in_text('globalwarming', tweet))
+tweets['global warming'] = tweets['text'].apply(lambda tweet: word_in_text('global warming', tweet))
+tweets['ParisClimateConference'] = tweets['text'].apply(lambda tweet: word_in_text('ParisClimateConference', tweet))
+tweets['cybermonday'] = tweets['text'].apply(lambda tweet: word_in_text('cybermonday', tweet))
+tweets['LHHHReunion'] = tweets['text'].apply(lambda tweet: word_in_text('LHHHReunion', tweet))
+tweets['wine'] = tweets['text'].apply(lambda tweet: word_in_text('wine', tweet))
+tweets['beer'] = tweets['text'].apply(lambda tweet: word_in_text('beer', tweet))
+tweets['whisky'] = tweets['text'].apply(lambda tweet: word_in_text('whisky', tweet))
+tweets['rum'] = tweets['text'].apply(lambda tweet: word_in_text('rum', tweet))
+tweets['vodka'] = tweets['text'].apply(lambda tweet: word_in_text('vodka', tweet))
+print 'GlobalWarming ', tweets['globalwarming'].value_counts()[True]
+print 'Global Warming ', tweets['global warming'].value_counts()[True]
+print 'Paris Climate Conference ', tweets['ParisClimateConference'].value_counts()[True]
+print 'Cyber Monday ', tweets['cybermonday'].value_counts()[True]
+print 'LHHHReunion ', tweets['LHHHReunion'].value_counts()[True]
+print 'Wine ', tweets['wine'].value_counts()[True]
+print 'Beer ', tweets['beer'].value_counts()[True]
+print 'Whisky ', tweets['whisky'].value_counts()[True]
+print 'Rum ', tweets['rum'].value_counts()[True]
+print 'Vodka ', tweets['vodka'].value_counts()[True]
